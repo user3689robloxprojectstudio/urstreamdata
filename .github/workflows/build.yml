@@ -29,6 +29,7 @@ jobs:
     - name: Create Cordova Project & Copy HTML
       run: |
         cordova create myApp com.urstreamdata.app URSTREAMDATA
+        rm -f myApp/www/index.html
         cp index.html myApp/www/index.html
         cd myApp
         cordova platform add android
