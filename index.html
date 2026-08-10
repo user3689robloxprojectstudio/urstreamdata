@@ -1,12 +1,620 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>URSTREAMDATA</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RobloxWidgets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        :root {
+            --bg-base: #f4f6f9;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #000000;
+            --accent-glow: rgba(0, 0, 0, 0.08);
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            max-height: 850px;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        @media(min-width: 423px) {
+            .app-container {
+                border-radius: 40px;
+                border: 8px solid #1e293b;
+                height: 90vh;
+            }
+        }
+
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            transition: var(--transition);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            z-index: 1;
+        }
+
+        .view.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+            z-index: 10;
+        }
+
+        /* --- BOOT VIEW --- */
+        #boot-view {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: var(--surface);
+        }
+
+        .boot-logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .boot-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--text-main);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+            box-shadow: 0 10px 25px var(--accent-glow);
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        .boot-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation: swipeText 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+        }
+
+        .get-started-btn {
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInBtn 0.8s ease 1.4s forwards;
+            box-shadow: 0 10px 20px var(--accent-glow);
+            transition: transform 0.2s;
+        }
+
+        .get-started-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* --- LOGIN VIEW --- */
+        #login-view {
+            justify-content: center;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--text-main);
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .divider::before { margin-right: 10px; }
+        .divider::after { margin-left: 10px; }
+
+        .oauth-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .oauth-btn:hover {
+            background: var(--border);
+        }
+
+        /* --- DASHBOARD VIEW --- */
+        #dashboard-view {
+            padding: 24px 0;
+            justify-content: space-between;
+        }
+
+        .dash-top {
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dash-top h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .icon-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .dash-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-card {
+            background: var(--bg-base);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .avatar-frame {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 3px solid white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .live-ticker-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulseDot 1s infinite alternate;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+        }
+
+        .stat-card span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-top: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .widget-card {
+            background: var(--text-main);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .widget-card h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .widget-card .live-stat {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        /* --- SETTINGS VIEW --- */
+        #settings-view {
+            padding: 24px;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .settings-header h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .setting-item {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .setting-item span {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .danger-btn {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Animations */
+        @keyframes swipeText {
+            to { width: 175px; }
+        }
+        @keyframes fadeInBtn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseLogo {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulseDot {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to URSTREAMDATA</h1>
-    <p>My Android App is working!</p>
+
+    <div class="app-container">
+        
+        <!-- 1. BOOT VIEW -->
+        <div id="boot-view" class="view active">
+            <div class="boot-logo-wrapper">
+                <div class="boot-icon">R</div>
+                <div class="boot-text">RobloxWidgets</div>
+            </div>
+            <button class="get-started-btn" onclick="goToLogin()">Get Started</button>
+        </div>
+
+        <!-- 2. LOGIN VIEW -->
+        <div id="login-view" class="view">
+            <div class="login-header">
+                <h2>Connect Account</h2>
+                <p>Link your Roblox profile to initialize widgets.</p>
+            </div>
+            <div class="input-group">
+                <label>Roblox Username</label>
+                <input type="text" id="username-input" placeholder="e.g. Builderman">
+            </div>
+            <button class="primary-btn" onclick="connectUsername()">Connect Username</button>
+            
+            <div class="divider">or</div>
+            
+            <button class="oauth-btn" onclick="connectOAuth()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+                Connect with OAuth2
+            </button>
+        </div>
+
+        <!-- 3. DASHBOARD VIEW -->
+        <div id="dashboard-view" class="view">
+            <div class="dash-top">
+                <h3>Dashboard</h3>
+                <button class="icon-btn" onclick="switchView('settings-view')">⚙️</button>
+            </div>
+            
+            <div class="dash-content">
+                <div class="profile-card">
+                    <div class="avatar-frame" id="dash-avatar">R</div>
+                    <div class="profile-info">
+                        <h4 id="dash-name">Roblox User</h4>
+                        <p id="dash-joined">Joined: Loading...</p>
+                        <div class="live-ticker-badge">
+                            <div class="live-dot"></div> Live Sync Active
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span>Friends</span>
+                        <h2 id="stat-friends">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Followers</span>
+                        <h2 id="stat-followers">0</h2>
+                    </div>
+                </div>
+
+                <div class="widget-card">
+                    <h5>Real-Time Session Ticker</h5>
+                    <div class="live-stat" id="live-timer">00:00:00</div>
+                    <p style="font-size:0.8rem; opacity:0.7;">Updating every second without lagging.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SETTINGS VIEW -->
+        <div id="settings-view" class="view">
+            <div class="settings-header">
+                <button class="icon-btn" onclick="switchView('dashboard-view')">←</button>
+                <h3>Settings</h3>
+            </div>
+            
+            <div class="setting-item">
+                <span>Real-Time Sync (1s)</span>
+                <input type="checkbox" checked style="accent-color: var(--text-main); width: 20px; height: 20px;">
+            </div>
+            <div class="setting-item">
+                <span>Modern Light Theme</span>
+                <input type="checkbox" checked style="accent-color: var(--text-main); width: 20px; height: 20px;">
+            </div>
+
+            <button class="danger-btn" onclick="disconnectAccount()">Disconnect Account</button>
+        </div>
+
+    </div>
+
+    <script>
+        let sessionSeconds = 0;
+        let timerInterval = null;
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function goToLogin() {
+            switchView('login-view');
+        }
+
+        function connectUsername() {
+            const username = document.getElementById('username-input').value.trim();
+            if (!username) {
+                alert('Please enter a valid Roblox username.');
+                return;
+            }
+
+            // Populate dashboard with mock/dynamic data based on input
+            document.getElementById('dash-name').textContent = username;
+            document.getElementById('dash-avatar').innerHTML = username.charAt(0).toUpperCase();
+            document.getElementById('dash-joined').textContent = "Joined: Jan 2018";
+            document.getElementById('stat-friends').textContent = Math.floor(Math.random() * 150) + 25;
+            document.getElementById('stat-followers').textContent = Math.floor(Math.random() * 1200) + 300;
+
+            switchView('dashboard-view');
+            startLiveTicker();
+        }
+
+        function connectOAuth() {
+            // Simulated secure Roblox OAuth2 handshake
+            document.getElementById('dash-name').textContent = "Verified_Player";
+            document.getElementById('dash-avatar').innerHTML = "VP";
+            document.getElementById('dash-joined').textContent = "Joined: Oct 2020";
+            document.getElementById('stat-friends').textContent = "200";
+            document.getElementById('stat-followers').textContent = "1,420";
+
+            switchView('dashboard-view');
+            startLiveTicker();
+        }
+
+        function startLiveTicker() {
+            if (timerInterval) clearInterval(timerInterval);
+            sessionSeconds = 0;
+            timerInterval = setInterval(() => {
+                sessionSeconds++;
+                const hrs = String(Math.floor(sessionSeconds / 3600)).padStart(2, '0');
+                const mins = String(Math.floor((sessionSeconds % 3600) / 60)).padStart(2, '0');
+                const secs = String(sessionSeconds % 60).padStart(2, '0');
+                const tickerEl = document.getElementById('live-timer');
+                if (tickerEl) {
+                    tickerEl.textContent = `${hrs}:${mins}:${secs}`;
+                }
+            }, 1000);
+        }
+
+        function disconnectAccount() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('username-input').value = '';
+            switchView('login-view');
+        }
+    </script>
 </body>
 </html>
