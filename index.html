@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URSTREAMDATA</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --success: #4ade80;
+            --button-bg: #0284c7;
+            --button-hover: #0369a1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 24px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        .metric-card h3 {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+        }
+
+        .metric-card p {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--success);
+            margin: 0;
+        }
+
+        .stream-box {
+            background: #0f172a;
+            border: 2px dashed #334155;
+            padding: 24px 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        #stream-status {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        button {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>URSTREAMDATA</h1>
+        <p class="subtitle">Altitude: 41,000 ft | Mode: Offline Simulation</p>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Simulated Speed</h3>
+                <p id="speed-display">1.2 Gbps</p>
+            </div>
+            <div class="metric-card">
+                <h3>Latency</h3>
+                <p id="latency-display">4 ms</p>
+            </div>
+        </div>
+
+        <div class="stream-box">
+            <p id="stream-status">▶ Cached Media Pipeline Ready</p>
+        </div>
+
+        <button id="turbo-btn" onclick="toggleTurbo()">Activate Turbo Stream</button>
+    </div>
+
+    <script>
+        let turboActive = false;
+
+        function toggleTurbo() {
+            turboActive = !turboActive;
+            const speedEl = document.getElementById('speed-display');
+            const latencyEl = document.getElementById('latency-display');
+            const statusEl = document.getElementById('stream-status');
+            const btn = document.getElementById('turbo-btn');
+
+            if (turboActive) {
+                speedEl.innerText = "5.4 Gbps";
+                latencyEl.innerText = "1 ms";
+                statusEl.innerText = "⚡ High-Altitude Turbo Stream Active";
+                btn.innerText = "Disable Turbo";
+                btn.style.background = "#16a34a";
+            } else {
+                speedEl.innerText = "1.2 Gbps";
+                latencyEl.innerText = "4 ms";
+                statusEl.innerText = "▶ Cached Media Pipeline Ready";
+                btn.innerText = "Activate Turbo Stream";
+                btn.style.background = "#0284c7";
+            }
+        }
+    </script>
+</body>
+</html>
